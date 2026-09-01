@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    permissions: write-all
     strategy:
       matrix:
         include:
@@ -91,6 +92,7 @@ jobs:
 
   buildAndroid:
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
       - uses: actions/checkout@main
@@ -173,6 +175,7 @@ jobs:
 
   buildiOS:
     runs-on: macos-15
+    permissions: write-all
 
     steps:
       - uses: actions/checkout@main
