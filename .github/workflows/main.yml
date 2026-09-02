@@ -70,15 +70,14 @@ jobs:
           script: await require('./actions/cache/clear-cache.js')({github, context}, 'cache-${{ matrix.target }}-release');
 
       - name: Save Current Cache
-        uses: actions/cache@main
+        id: cache-build-save
+        uses: actions/cache/save@main
         with:
-          key: cache-${{ matrix.target }}-release
           path: |
             .haxelib/
             export/release/${{ matrix.target }}/haxe/
             export/release/${{ matrix.target }}/obj/
-          restore-keys: |
-            cache-${{ matrix.target }}-release
+          key: cache-${{ matrix.target }}-release
 
       - name: Tar files
         if: matrix.target == 'macos'
@@ -157,15 +156,14 @@ jobs:
           script: await require('./actions/cache/clear-cache.js')({github, context}, 'cache-android-release');
 
       - name: Save Current Cache
-        uses: actions/cache@main
+        id: cache-build-save
+        uses: actions/cache/save@main
         with:
-          key: cache-android-release
           path: |
             .haxelib/
             export/release/android/haxe/
             export/release/android/obj/
-          restore-keys: |
-            cache-android-release
+          key: cache-android-release
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
@@ -213,15 +211,14 @@ jobs:
           script: await require('./actions/cache/clear-cache.js')({github, context}, 'cache-ios-release');
 
       - name: Save Current Cache
-        uses: actions/cache@main
+        id: cache-build-save
+        uses: actions/cache/save@main
         with:
-          key: cache-ios-release
           path: |
             .haxelib/
             export/release/ios/haxe/
             export/release/ios/obj/
-          restore-keys: |
-            cache-ios-release
+          key: cache-ios-release
       
       - name: Create IPA Package
         run: |
