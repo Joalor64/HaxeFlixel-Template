@@ -22,7 +22,7 @@ jobs:
 
           - target: macos
             title: macOS
-            runs-on: macos-14
+            runs-on: macos-15
             artifact_path: Template.tar.gz
             artifact_name: macOSBuild
 
@@ -41,7 +41,7 @@ jobs:
           - target: android
             title: Android
             runs-on: ubuntu-latest
-            artifact_path: export/release/android/bin/app/build/outputs/apk/release
+            artifact_path: export/release/android/bin/app/build/outputs/apk/debug
             artifact_name: androidBuild
 
           - target: ios
