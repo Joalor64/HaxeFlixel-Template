@@ -8,9 +8,6 @@
 		company="Joalor64" />
 	<app preloader="flixel.system.FlxPreloader" />
 
-	<!-- Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2 -->
-	<set name="SWF_VERSION" value="11.8" />
-
 	<!-- ____________________________ Window Settings ___________________________ -->
 
 	<!-- All targets -->
@@ -37,8 +34,8 @@
 
 	<source path="source" />
 
-	<assets path="assets" exclude="*.ogg" if="web" />
-	<assets path="assets" exclude="*.mp3" unless="web" />
+	<assets path="assets" exclude="*.ogg|*-here.txt" if="web" />
+	<assets path="assets" exclude="*.mp3|*-here.txt" unless="web" />
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
@@ -50,9 +47,6 @@
 
 	<!-- In case you want to use the ui package -->
 	<haxelib name="flixel-ui" />
-
-	<!-- In case you want to use the tools package -->
-	<haxelib name="flixel-tools" />
 
 	<!-- In case you want Android support -->
 	<haxelib name="extension-androidtools" if="android" />
@@ -68,13 +62,6 @@
 	<!-- Disable the Flixel core debugger. Automatically gets set whenever you compile in release
 	mode! -->
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
-
-	<!-- Enable this for Nape release builds for a serious peformance improvement -->
-	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
-
-	<!-- Fix for Macros -->
-	<haxeflag name="--macro" value="allowPackage('flash')" />
-	<haxeflag name="--macro" value="include('my.pack')" />
 
 	<!-- Analyzer Optimization -->
 	<haxedef name="analyzer-optimize" />

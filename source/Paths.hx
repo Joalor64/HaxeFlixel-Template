@@ -2,10 +2,10 @@ package;
 
 #if sys
 import sys.FileSystem;
-import sys.io.File;
 #end
 import flixel.FlxG;
 import flixel.graphics.frames.FlxAtlasFrames;
+import openfl.utils.Assets;
 
 /**
  * Provides utility functions for handling asset paths and loading assets in a game.
@@ -25,18 +25,22 @@ class Paths
 
 	/**
 	 * Helper function to get the path to a file, with an optional folder.
-	 * @param folder The folder to look in, if it exists.
+	 * If the file isn't in that folder, or no folder is given, the path in `DEFAULT_FOLDER` is returned instead.
 	 * @param file The file to look for.
-	 * @return String
+	 * @param folder The folder to look in first.
+	 * @return The path to the file.
 	 */
 	static public function getPath(file:String, ?folder:String):String
 	{
-		if (folder == null || folder == DEFAULT_FOLDER #if sys || !FileSystem.exists(folder) #end)
+		if (folder != null && folder != DEFAULT_FOLDER)
 		{
-			folder = DEFAULT_FOLDER;
+			final path:String = '$folder/$file';
+
+			if (Assets.exists(path) #if sys || FileSystem.exists(path) #end)
+				return path;
 		}
 
-		return folder + '/' + file;
+		return '$DEFAULT_FOLDER/$file';
 	}
 
 	/**
@@ -137,7 +141,7 @@ class Paths
 	 * Gets a sparrow atlas.
 	 * @param key The key for the atlas.
 	 * @param folder The folder to look in, if it exists.
-	 * @return The path to the atlas.
+	 * @return The atlas frames.
 	 */
 	inline static public function getSparrowAtlas(key:String, ?folder:String):FlxAtlasFrames
 		return FlxAtlasFrames.fromSparrow(image(key, folder), getPath('images/$key.xml', folder));
@@ -146,7 +150,7 @@ class Paths
 	 * Gets a packer atlas.
 	 * @param key The key for the atlas.
 	 * @param folder The folder to look in, if it exists.
-	 * @return The path to the atlas.
+	 * @return The atlas frames.
 	 */
 	inline static public function getPackerAtlas(key:String, ?folder:String):FlxAtlasFrames
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, folder), getPath('images/$key.txt', folder));

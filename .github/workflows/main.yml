@@ -7,9 +7,15 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
-    permissions: write-all
+    permissions:
+      contents: read
+      actions: write
     strategy:
       fail-fast: false
       matrix:
@@ -54,7 +60,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
 
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v7
 
       - name: Setup Android NDK
         if: matrix.target == 'android'
@@ -74,13 +80,13 @@ jobs:
         if: matrix.target == 'android'
         uses: android-actions/setup-android@v4
 
-      - uses: krdlab/setup-haxe@master
+      - uses: krdlab/setup-haxe@v2
         with:
           haxe-version: 4.3.7
 
       - name: Restore Previous Cache
         id: cache-build-restore
-        uses: actions/cache/restore@main
+        uses: actions/cache/restore@v6
         with:
           path: |
             .haxelib/
@@ -88,22 +94,8 @@ jobs:
             export/release/${{ matrix.target }}/obj/
           key: cache-${{ matrix.target }}-release
 
-      - name: Set Cache Status | In Windows
-        id: cache-status-windows
-        if: matrix.target == 'windows'
-        run: echo CACHE_HIT=${{ steps.cache-build-restore.outputs.cache-hit }} | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-        shell: powershell
-
-      - name: Set Cache Status | In Unix
-        id: cache-status-unix
-        if: matrix.target != 'windows'
-        run: echo "CACHE_HIT=${{ steps.cache-build-restore.outputs.cache-hit }}" >> $GITHUB_ENV
-
       - name: Installing Libraries
         run: haxe --interp -cp ./actions/libs-installer -D analyzer-optimize -main Main
-
-      - name: Create Version Tag
-        run: echo "${{ github.run_id }}" > VERSION
 
       - name: Setup Lime (Android)
         if: matrix.target == 'android'
@@ -122,13 +114,13 @@ jobs:
           haxelib run lime build ${{ matrix.target }} ${{ matrix.target == 'ios' && '-nosign' || '' }}
 
       - name: Clear Previous Cache
-        uses: actions/github-script@main
+        uses: actions/github-script@v9
         with:
           script: await require('./actions/cache/clear-cache.js')({github, context}, 'cache-${{ matrix.target }}-release');
 
       - name: Save Current Cache
         id: cache-build-save
-        uses: actions/cache/save@main
+        uses: actions/cache/save@v6
         with:
           path: |
             .haxelib/
@@ -150,7 +142,7 @@ jobs:
           rm -rf Payload
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact_name }}
           path: ${{ matrix.artifact_path }}

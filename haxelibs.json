@@ -21,10 +21,6 @@
       "type": "haxelib"
     },
     {
-      "name": "flixel-tools",
-      "type": "haxelib"
-    },
-    {
       "name": "hxcpp",
       "type": "haxelib"
     },

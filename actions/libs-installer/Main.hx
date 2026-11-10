@@ -42,7 +42,7 @@ class Main
 		if (!FileSystem.exists('.haxelib'))
 			runCommand(['haxelib', 'newrepo', '--quiet', '--never']);
 
-		// Read and parse the hmm.json configuration file
+		// Read and parse the haxelibs.json configuration file
 		final config:HmmConfig = Json.parse(File.getContent('./haxelibs.json'));
 
 		// Options to run with the commands
@@ -85,16 +85,20 @@ class Main
 
 	/**
 	 * Executes a system command with the provided arguments.
+	 * If the command fails, the program exits with the same code, so CI marks the step as failed.
 	 * @param args The command and its arguments to be executed.
 	 */
 	public static function runCommand(args:Array<String>):Void
 	{
-		final command:String = args.join(' ');
+		Sys.println(AnsiColors.yellow(args.join(' ')));
 
-		if (command != AnsiColors.yellow(command))
-			Sys.println(AnsiColors.yellow(command));
+		final exitCode:Int = Sys.command(args.shift(), args);
 
-		Sys.command(args.shift(), args);
+		if (exitCode != 0)
+		{
+			Sys.println(AnsiColors.red('Command failed with exit code $exitCode.'));
+			Sys.exit(exitCode);
+		}
 	}
 }
 
